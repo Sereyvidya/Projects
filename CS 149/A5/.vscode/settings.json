@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "commandnodell.h": "c",
-        "unistd.h": "c",
-        "stdlib.h": "c",
-        "string.h": "c"
-    }
-}

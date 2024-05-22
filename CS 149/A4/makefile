@@ -7,4 +7,4 @@ matrixmult: ../A1/matrixmult.c
 	gcc -o ../A1/matrixmult ../A1/matrixmult.c
 
 clean:
-	rm -f *.txt proc_manager ../A1/matrixmult
+	rm -f *.out -f *.err proc_manager ../A1/matrixmult

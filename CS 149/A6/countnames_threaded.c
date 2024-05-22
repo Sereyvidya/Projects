@@ -82,6 +82,7 @@ void *thread_countnames(void *arg) {
         }
 
         // Look up the name to see if it exists
+        pthread_mutex_lock(&countLock);
         struct nlist *np;
         np = lookup(name);
         if (np == NULL) { // If name does not exist, insert to table
@@ -89,10 +90,9 @@ void *thread_countnames(void *arg) {
             np = insert(name, &one);
         } 
         else { // If name was already in table then increment it
-            pthread_mutex_lock(&countLock);
             (*(np->count))++;
-            pthread_mutex_unlock(&countLock);
         }   
+        pthread_mutex_unlock(&countLock);
     }    
 
     // Close files, print log message, free pointers, and exit thread

@@ -156,7 +156,7 @@ void* MALLOC(int t,char* file,int line)
 // Information about the function F should be printed by printing the stack (use PRINT_TRACE)
 void FREE(void* p,char* file,int line)
 {
-  	printf("File %s, line %d, %s allocated new memory segment at address %p.\n", file, line, PRINT_TRACE(), p);
+  	printf("File %s, line %d, %s free new memory segment at address %p.\n", file, line, PRINT_TRACE(), p);
 	free(p);
 }
 
@@ -194,27 +194,33 @@ void make_extend_array()
 	array = (int**) malloc(sizeof(int*)*4);  // 4 rows
 	for(i=0; i<ROW; i++) {
 	 array[i]=(int*) malloc(sizeof(int)*3);  // 3 columns
-	 for(j=0; j<COL; j++)
+	 for(j=0; j<COL; j++) {
 	  array[i][j]=10*i+j;
+	  }
 	}//for
 
         //display array
-	for(i=0; i<ROW; i++)
-	 for(j=0; j<COL; j++)
+	for(i=0; i<ROW; i++) {
+	 for(j=0; j<COL; j++) {
 	  printf("array[%d][%d]=%d\n",i,j,array[i][j]);
+	  }
+	}
 
 	// and a new column
 	int NEWCOL = add_column(array,ROW,COL);
 
 	// now display the array again
-        for(i=0; i<ROW; i++)
-	 for(j=0; j<NEWCOL; j++)
+        for(i=0; i<ROW; i++) {
+	 for(j=0; j<NEWCOL; j++) {
 	  printf("array[%d][%d]=%d\n",i,j,array[i][j]);
+	  }
+	}
 
 	 //now deallocate it
-	 for(i=0; i<ROW; i++)
+	 for(i=0; i<ROW; i++) {
 		 free((void*)array[i]);
 	 free((void*)array);
+	 }
 
 	 POP_TRACE();
          return;

@@ -16,7 +16,7 @@
 
 // Constant values
 const int MAX_LENGTH_OF_NAMES = 31;
-const int MAX_NUMBER_OF_NAMES = 100;
+const int MAX_NUMBER_OF_NAMES = 101;
 
 /**
  * This function Searches an array of strings and compares with target.
@@ -118,8 +118,7 @@ int main (int argc, char *argv[]) {
         FILE *file;
         char *fileName;
         if (argc > 1) {
-            fileName = malloc(strlen(argv[j + 1]) + 1);
-            strcpy(fileName, argv[j + 1]);
+            fileName = argv[j + 1];
         }
 
 
@@ -136,7 +135,7 @@ int main (int argc, char *argv[]) {
 
             // Read file name from pipe and open file
             char fileNameBuffer[MAX_LENGTH_OF_NAMES];
-            if (read(parentToChildPipe[0], fileNameBuffer, sizeof(fileNameBuffer)) == -1) {
+            if (read(parentToChildPipe[0], fileNameBuffer, sizeof(fileNameBuffer) - 1) == -1) {
                 return 1;
             }
 
@@ -191,7 +190,7 @@ int main (int argc, char *argv[]) {
 
             // Write file's name into pipe
             if (argc > 1) {
-                if (write(parentToChildPipe[1], fileName, strlen(fileName) + 1) == -1) {
+                if (write(parentToChildPipe[1], fileName, strlen(fileName)) == -1) {
                     return 1;
                 }
             } 
@@ -239,8 +238,6 @@ int main (int argc, char *argv[]) {
             close(parentToChildPipe[1]);
             close(childToParentPipe[0]);
         }
-
-        free(fileName);
     }
         // Print names and their occurences
         for (int i = 0; i < allCount; i++) {

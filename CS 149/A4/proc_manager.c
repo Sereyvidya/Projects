@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 // Constant values
 const int MAX_LENGTH_OF_COMMAND = 101; 
@@ -69,8 +70,13 @@ int main(int argc, char *argv[]) {
         separateCommand(args, command);
 
         // Create file names
-        char fileOutName[FILE_NAME_LENGTH] = "temp.out";
-        char fileErrName[FILE_NAME_LENGTH] = "temp.err";
+        char fileOutName[FILE_NAME_LENGTH];
+        memset(fileOutName, '\0', sizeof(fileOutName));
+        strcpy(fileOutName, "temp.out");
+        
+        char fileErrName[FILE_NAME_LENGTH];
+        memset(fileErrName, '\0', sizeof(fileErrName));
+        strcpy(fileErrName, "temp.err");        
         
         // Create output and error files and like with stdout and stderr
         int fd1 = open(fileOutName, O_RDWR | O_CREAT | O_APPEND, 0777);
@@ -122,7 +128,7 @@ int main(int argc, char *argv[]) {
             printf("Finished child %d pid of parent %d\n", pid, getpid());
             fflush(stdout);
 
-            if (WIFEXITED(status)) { // If child process terminated with exitcode
+            if (WIFEXITED(status)) { // Child process terminated with exitcode
                 // Print exitcode to error file
                 fprintf(stderr, "Exited with exitcode = %d\n", WEXITSTATUS(status));
                 fflush(stderr);
@@ -131,6 +137,10 @@ int main(int argc, char *argv[]) {
                 // Print signal message to error file
                 int signal_number = WTERMSIG(status);
                 fprintf(stderr, "Killed with signal %d\n", signal_number);
+                fflush(stderr);
+            }
+            else { // Print normal exitcode to error file
+                fprintf(stderr, "Exited with exitcode = 0\n");
                 fflush(stderr);
             }
         }
