@@ -1,0 +1,3 @@
+var ident = function(x) { x; };
+var two = function() { 2; };
+print(ident(two));
