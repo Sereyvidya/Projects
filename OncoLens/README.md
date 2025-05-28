@@ -11,9 +11,9 @@ This project analyzes clinical cancer patient data and models treatment outcomes
 ## 🚀 Usage
 
 1. Copy the entire OncoLens folder into your Google Drive. 
-2. Open `DataProcessing.ipynb` and set the PATH variable to project's directory.
+2. Open `DataProcessing.ipynb` in Google Colab and set the PATH variable to project's directory.
 3. Run `DataProcessing.ipynb` to load and clean the data.
-4. Open `Models.ipynb` and set the PATH variable to 
+4. Open `Models.ipynb` in Google Colab and set the PATH variable to 
 project's directory.
 5. Run `Models.ipynb` to train and evaluate classification models.
 6. Modify model parameters and preprocessing steps as needed to experiment with performance.
