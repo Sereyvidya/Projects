@@ -1,4 +1,4 @@
-# 🧬 APEye: Malware Family Classification from API Calls
+# 🤖 APEye: Malware Family Classification from API Calls
 
 This project explores techniques to classify malware into families based on their API call behaviors. It includes preprocessing, deep learning, and traditional machine learning approaches.
 
