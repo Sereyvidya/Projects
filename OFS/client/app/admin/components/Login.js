@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
-import { useUserContext } from "../context/UserContext";
+import { useAdminContext } from "../context/AdminContext";
 import { FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import { login } from "../../api/AuthRoutes";
 
@@ -10,8 +12,7 @@ import { login } from "../../api/AuthRoutes";
  * Renders a login form with email, password, and "Log in" button.
  */
 const Login = () => {
-  const { API_URL, setShowLogin, setShowSignup, setIsLoggedIn } =
-    useUserContext();
+  const { API_URL, setIsLoggedIn } = useAdminContext();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -36,12 +37,10 @@ const Login = () => {
 
     const { ok, data, error } = await login(API_URL, formData);
 
-    if (ok) {
+    if (ok && data.isAdmin) {
       toast.success("Log in successful!", {
         onClose: () => {
-          // sessionStorage.setItem("authToken", data.token);
           setIsLoggedIn(true);
-          setShowLogin(false);
         },
       });
       setCooldown(true);
@@ -57,17 +56,20 @@ const Login = () => {
 
   return (
     <div className="m-auto flex h-auto w-100 flex-col rounded-lg bg-[#f1f0e9]">
+      <ToastContainer
+        position="top-center"
+        autoClose={1500}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover={false}
+        draggable={false}
+        toastClassName="rounded-lg shadow p-4"
+      />
       {/* Login and Close button */}
       <div className="relative flex h-20 items-center justify-between rounded-t-lg border-2 border-[#90b89b4d] bg-[#41644a] px-4 py-4 text-[#f1f0e9]">
         <h1 className="font-display absolute top-4 left-1/2 -translate-x-1/2 transform text-4xl font-bold text-[#f1f0e9] [text-shadow:_0_1px_3px_#73977b]">
           Log in
         </h1>
-        <button
-          className="absolute top-4 right-4 rounded border border-[#90b89b] bg-[#f1f0e9] px-2 text-[#41644a] shadow transition-colors hover:scale-103 hover:bg-[#73977b] focus:ring-2 focus:ring-[#73977b] focus:outline-none"
-          onClick={() => setShowLogin(false)}
-        >
-          &times;
-        </button>
       </div>
 
       {/* Form */}
@@ -124,24 +126,6 @@ const Login = () => {
         >
           {isSubmitting ? "Logging in..." : "Log in"}
         </button>
-
-        {/* Sign up prompt */}
-        <div className="mt-2 flex justify-center">
-          <p className="mr-1 text-[#0d4715]">Don't have an account?</p>
-          <p
-            className={`font-semibold text-[#73977b] hover:underline ${
-              isSubmitting ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-            }`}
-            onClick={() => {
-              if (!isSubmitting) {
-                setShowLogin(false);
-                setShowSignup(true);
-              }
-            }}
-          >
-            Sign up
-          </p>
-        </div>
       </form>
     </div>
   );

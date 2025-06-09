@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { toast } from "react-toastify";
-import { useUserContext } from "../context/UserContext";
-import { postItemToCart } from "../../api/CartItemRoutes";
+import { useAdminContext } from "../context/AdminContext";
 import ProductCard from "./ProductCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -11,39 +9,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * Renders scrollable products.
  */
 const ProductGrid = () => {
-  const {
-    API_URL,
-    isLoggedIn,
-    searchQuery,
-    selectedCategory,
-    categories,
-    setShowLogin,
-    products,
-    cartItems,
-    setShowCart,
-    fetchCart,
-  } = useUserContext();
+  const { searchQuery, selectedCategory, categories, products } =
+    useAdminContext();
 
   const scrollRefs = useRef({});
 
-  const isInCart = (id) =>
-    cartItems.some((item) => item.product.productID === id);
-
   const handleClick = async (product) => {
-    if (!isLoggedIn) {
-      setShowLogin(true);
-      return;
-    }
-    if (isInCart(product.productID)) {
-      setShowCart(true);
-      return;
-    }
-    const { ok } = await postItemToCart(API_URL, product);
-    if (ok) {
-      fetchCart();
-    } else {
-      toast.error("Failed to add item to cart.");
-    }
+    // Open edit product form
   };
 
   if (!products.length) {
@@ -110,7 +82,6 @@ const ProductGrid = () => {
                     >
                       <ProductCard
                         product={product}
-                        isAdded={isInCart(product.productID)}
                         handleClick={handleClick}
                       />
                     </div>

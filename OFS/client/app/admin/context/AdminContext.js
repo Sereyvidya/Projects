@@ -1,21 +1,16 @@
 import { createContext, useContext, useState, useRef, useEffect } from "react";
 import { refresh } from "../../api/AuthRoutes";
-import { getAllItemsFromCart } from "../../api/CartItemRoutes";
 import { getAllProducts } from "../../api/ProductRoutes";
 import { getUser } from "../../api/UserRoutes";
-import { loadStripe } from "@stripe/stripe-js";
 
-const UserContext = createContext();
+const AdminContext = createContext();
 
-export function UserProvider({ children }) {
+export function AdminProvider({ children }) {
   // States for rendering components
-  const [showLogin, setShowLogin] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showCart, setShowCart] = useState(false);
-  const [showDeliveryAddress, setShowDeliveryAddress] = useState(false);
-  const [showOrderSummary, setShowOrderSummary] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [showDeliveryDashboard, setShowDeliveryDashboard] = useState(false);
 
   // States for filter products
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,22 +30,12 @@ export function UserProvider({ children }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Other states
-  const [address, setAddress] = useState({
-    street: "",
-    city: "",
-    state: "",
-    zip: "",
-  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [profile, setProfile] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
   const dropdownRef = useRef(null);
   const API_URL = "http://localhost:5000";
-  const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-  const STRIPE_PROMISE = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-  );
 
   const fetchProfile = async () => {
     const { ok, data } = await getUser(API_URL);
@@ -58,17 +43,6 @@ export function UserProvider({ children }) {
       setProfile(data);
     } else {
       console.error("Failed to fetch profile.");
-    }
-  };
-
-  const fetchCart = async () => {
-    if (isLoggedIn) {
-      const { ok, data } = await getAllItemsFromCart(API_URL);
-      if (ok) {
-        setCartItems(data);
-      } else {
-        console.error("Failed to get items from cart.");
-      }
     }
   };
 
@@ -101,7 +75,6 @@ export function UserProvider({ children }) {
     fetchAllProducts();
     if (isLoggedIn) {
       fetchProfile();
-      fetchCart();
     }
   }, [isLoggedIn]);
 
@@ -115,24 +88,18 @@ export function UserProvider({ children }) {
             console.warn("Refresh token failed or expired.");
             setIsLoggedIn(false);
             setProfile(null);
-            setCartItems([]);
           }
         } catch (err) {
           console.error("Error refreshing token:", err);
         }
       },
-
       5 * 60 * 1000,
     ); // every 5 minutes
-
     return () => clearInterval(interval);
   }, []);
 
   const contextValue = {
     API_URL,
-    MAPBOX_ACCESS_TOKEN,
-    STRIPE_PROMISE,
-
     dropdownRef,
 
     searchQuery,
@@ -141,40 +108,33 @@ export function UserProvider({ children }) {
     selectedCategory,
     setSelectedCategory,
 
-    showLogin,
-    setShowLogin,
-    showSignup,
-    setShowSignup,
     showProfile,
     setShowProfile,
-    showDeleteConfirm,
-    setShowDeleteConfirm,
-    showCart,
-    setShowCart,
-    showDeliveryAddress,
-    setShowDeliveryAddress,
-    showOrderSummary,
-    setShowOrderSummary,
+    showAddForm,
+    setShowAddForm,
+    showEditForm,
+    setShowEditForm,
+    showDeliveryDashboard,
+    setShowDeliveryDashboard,
 
     isLoggedIn,
     setIsLoggedIn,
+    editingProduct,
+    setEditingProduct,
     products,
-    cartItems,
-    setCartItems,
     profile,
     setProfile,
-    address,
-    setAddress,
 
-    fetchCart,
     fetchAllProducts,
   };
 
   return (
-    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
+    <AdminContext.Provider value={contextValue}>
+      {children}
+    </AdminContext.Provider>
   );
 }
 
-export function useUserContext() {
-  return useContext(UserContext);
+export function useAdminContext() {
+  return useContext(AdminContext);
 }
